@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Coins, Plus, User, Trash2, Edit, Save, X, GripVertical, History, ArrowLeft } from "lucide-react"
+import { Coins, Plus, User, Trash2, Edit, Save, X, GripVertical, History, ArrowLeft, Moon, Sun } from "lucide-react"
 
 interface Raid {
   id: string
@@ -68,6 +68,7 @@ export default function SimpleRaidTracker() {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [goldHistory, setGoldHistory] = useState<GoldHistoryEntry[]>([])
   const [currentPage, setCurrentPage] = useState<"tracker" | "history">("tracker")
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
   const [newAccountName, setNewAccountName] = useState("")
   const [newCharacterName, setNewCharacterName] = useState("")
@@ -91,6 +92,51 @@ export default function SimpleRaidTracker() {
   const [addAccountDialogOpen, setAddAccountDialogOpen] = useState(false)
   const [lastResetDate, setLastResetDate] = useState<string>("")
   const [resetTimer, setResetTimer] = useState<NodeJS.Timeout | null>(null)
+
+  // Dark mode functions
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode
+    setIsDarkMode(newDarkMode)
+
+    if (newDarkMode) {
+      document.documentElement.classList.add("dark")
+      document.body.classList.add("dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+      document.body.classList.remove("dark")
+    }
+
+    // Save to localStorage
+    localStorage.setItem("darkMode", newDarkMode.toString())
+  }
+
+  // Load dark mode preference
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem("darkMode")
+    if (savedDarkMode !== null) {
+      const isDark = savedDarkMode === "true"
+      setIsDarkMode(isDark)
+      // Apply to both html and document element
+      if (isDark) {
+        document.documentElement.classList.add("dark")
+        document.body.classList.add("dark")
+      } else {
+        document.documentElement.classList.remove("dark")
+        document.body.classList.remove("dark")
+      }
+    } else {
+      // Check system preference
+      const systemDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+      setIsDarkMode(systemDarkMode)
+      if (systemDarkMode) {
+        document.documentElement.classList.add("dark")
+        document.body.classList.add("dark")
+      } else {
+        document.documentElement.classList.remove("dark")
+        document.body.classList.remove("dark")
+      }
+    }
+  }, [])
 
   const getTotalGoldAllAccounts = () => {
     return accounts.reduce((total, account) => {
@@ -778,7 +824,9 @@ export default function SimpleRaidTracker() {
               <div className="flex items-center justify-center gap-2">
                 <Coins className="h-5 w-5 text-green-500" />
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{getOverallTotalGold().toLocaleString()} gold</div>
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {getOverallTotalGold().toLocaleString()} gold
+                  </div>
                   <div className="text-sm text-muted-foreground">Overall Total Gold Earned</div>
                 </div>
               </div>
@@ -851,7 +899,7 @@ export default function SimpleRaidTracker() {
                           </div>
                           <div className="flex items-center gap-3">
                             <div className="text-right">
-                              <div className="text-lg font-bold text-green-600">
+                              <div className="text-lg font-bold text-green-600 dark:text-green-400">
                                 {entry.grandTotal.toLocaleString()}
                               </div>
                               <div className="text-xs text-muted-foreground">gold</div>
@@ -860,7 +908,7 @@ export default function SimpleRaidTracker() {
                               variant="ghost"
                               size="sm"
                               onClick={() => confirmDeleteHistoryEntry(entry.id)}
-                              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                              className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                             >
                               <Trash2 className="h-3 w-3" />
                             </Button>
@@ -873,7 +921,7 @@ export default function SimpleRaidTracker() {
                               className="flex items-center justify-between p-2 bg-muted rounded text-sm"
                             >
                               <span className="font-medium truncate mr-2">{account.accountName}</span>
-                              <span className="text-yellow-600 font-semibold text-xs whitespace-nowrap">
+                              <span className="text-yellow-600 dark:text-yellow-400 font-semibold text-xs whitespace-nowrap">
                                 {account.totalGold.toLocaleString()}g
                               </span>
                             </div>
@@ -897,7 +945,7 @@ export default function SimpleRaidTracker() {
     )
   }
 
-  // Move the AlertDialog components outside of the main tracker return statement so they're available on both pages. Replace the current return structure at the end of the component with:
+  // Move the AlertDialog components outside of the page-specific content so they're available on both pages. Replace the current return structure at the end of the component with:
   return (
     <>
       {currentPage === "history" ? (
@@ -910,7 +958,7 @@ export default function SimpleRaidTracker() {
           </div>
 
           {/* Navigation */}
-          <div className="flex justify-center">
+          <div className="flex justify-center gap-4">
             <Button onClick={() => setCurrentPage("history")} variant="outline" className="flex items-center gap-2">
               <History className="h-4 w-4" />
               View Gold History
@@ -924,7 +972,7 @@ export default function SimpleRaidTracker() {
                 <div className="flex items-center justify-center gap-2">
                   <Coins className="h-6 w-6 text-green-500" />
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                       {getTotalGoldAllAccounts().toLocaleString()} gold
                     </div>
                     <div className="text-sm text-muted-foreground">Total Gold Earned This Week</div>
@@ -941,7 +989,7 @@ export default function SimpleRaidTracker() {
                 <div className="flex items-center justify-center gap-4">
                   <div className="text-center">
                     <div className="text-sm font-medium">Next Reset</div>
-                    <div className="text-lg font-bold text-blue-600">
+                    <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
                       {getNextWednesday6PM().toLocaleDateString("en-US", {
                         weekday: "long",
                         month: "short",
@@ -1006,7 +1054,7 @@ export default function SimpleRaidTracker() {
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="font-semibold text-yellow-600">
+                  <span className="font-semibold text-yellow-600 dark:text-yellow-400">
                     {getAccountTotalGold(account).toLocaleString()} gold
                   </span>
                   <div className="flex gap-2">
@@ -1046,7 +1094,7 @@ export default function SimpleRaidTracker() {
                       variant="ghost"
                       size="sm"
                       onClick={() => confirmDeleteAccount(account.id)}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500 hover:text-red-700 dark:hover:bg-red-950"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -1107,7 +1155,7 @@ export default function SimpleRaidTracker() {
                               dragOverRaidIndex &&
                               dragOverRaidIndex.accountId === account.id &&
                               dragOverRaidIndex.index === index
-                                ? "bg-blue-50 border-2 border-dashed border-blue-300"
+                                ? "bg-blue-50 border-2 border-dashed border-blue-300 dark:bg-blue-950 dark:border-blue-700"
                                 : ""
                             }`}
                             draggable={account.isEditMode}
@@ -1136,7 +1184,7 @@ export default function SimpleRaidTracker() {
                                       onChange={(e) => updateRaidGold(account.id, raid.id, e.target.value)}
                                       className="h-6 w-16 text-xs text-center"
                                     />
-                                    <span className="text-xs text-yellow-600">gold</span>
+                                    <span className="text-xs text-yellow-600 dark:text-yellow-400">gold</span>
                                   </div>
                                   <Button
                                     variant="ghost"
@@ -1150,7 +1198,9 @@ export default function SimpleRaidTracker() {
                               ) : (
                                 <>
                                   <div className="text-sm">{raid.name}</div>
-                                  <div className="text-xs text-yellow-600 font-semibold">{raid.goldReward} gold</div>
+                                  <div className="text-xs text-yellow-600 dark:text-yellow-400 font-semibold">
+                                    {raid.goldReward} gold
+                                  </div>
                                 </>
                               )}
                             </div>
@@ -1169,7 +1219,7 @@ export default function SimpleRaidTracker() {
                             dragOverCharacterIndex &&
                             dragOverCharacterIndex.accountId === account.id &&
                             dragOverCharacterIndex.index === characterIndex
-                              ? "bg-blue-50 border-2 border-dashed border-blue-300"
+                              ? "bg-blue-50 border-2 border-dashed border-blue-300 dark:bg-blue-950 dark:border-blue-700"
                               : ""
                           }`}
                           draggable={account.isEditMode}
@@ -1215,7 +1265,7 @@ export default function SimpleRaidTracker() {
                             </td>
                           ))}
                           <td className="text-center py-4 px-4">
-                            <span className="font-semibold text-yellow-600">
+                            <span className="font-semibold text-yellow-600 dark:text-yellow-400">
                               {getCharacterTotalGold(character).toLocaleString()}
                             </span>
                           </td>
@@ -1225,7 +1275,7 @@ export default function SimpleRaidTracker() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => confirmDeleteCharacter(account.id, character.id)}
-                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -1329,6 +1379,18 @@ export default function SimpleRaidTracker() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Fixed Dark Mode Toggle - Bottom Right */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button
+          onClick={toggleDarkMode}
+          size="lg"
+          className="rounded-full w-14 h-14 shadow-lg bg-background border-2 hover:scale-110 transition-all duration-200"
+          variant="outline"
+        >
+          {isDarkMode ? <Sun className="h-6 w-6 text-yellow-500" /> : <Moon className="h-6 w-6 text-blue-600" />}
+        </Button>
+      </div>
     </>
   )
 }
