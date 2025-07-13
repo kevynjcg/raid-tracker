@@ -31,9 +31,10 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Screenshots
 <img width="1852" height="885" alt="image" src="https://github.com/user-attachments/assets/37c7e74b-fb2b-4ebc-9dc4-3e2432a800c0" />
-![image](https://github.com/user-attachments/assets/7899ec5a-3e88-49b2-a5e8-9514ffad9487)
-![image](https://github.com/user-attachments/assets/6a3e073b-458b-4281-9f90-9948132491fa)
-![image](https://github.com/user-attachments/assets/8581ad86-8b98-463b-8d38-40f8c179f96f)
+<img width="1281" height="854" alt="image" src="https://github.com/user-attachments/assets/4ce07ae8-4ffe-444a-8f54-e090f648a8af" />
+<img width="1307" height="870" alt="image" src="https://github.com/user-attachments/assets/b232ed47-29d3-41c3-99c5-a9c553622d57" />
+<img width="1283" height="853" alt="image" src="https://github.com/user-attachments/assets/46797452-f2a3-4be5-ac8d-c0e72341a609" />
+
 
 
 
